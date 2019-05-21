@@ -1,6 +1,3 @@
-#flag = "Hello World"
-#print(flag)
-
 spanish_dict = {
     1: "a",
     2: "b",
@@ -25,6 +22,7 @@ spanish_dict = {
     21: "t",
     22: "u",
     23: "v",
+    24: "w",
     24: "x",
     25: "y",
     26: "z"
