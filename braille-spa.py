@@ -1,4 +1,5 @@
 spanish_dict = {
+    0: " ",
     1: "a",
     2: "b",
     3: "c",
@@ -26,6 +27,16 @@ spanish_dict = {
     24: "x",
     25: "y",
     26: "z"
+    27: "0",
+    28: "1",
+    29: "2",
+    30: "3",
+    31: "4",
+    32: "5",
+    33: "6",
+    34: "7",
+    35: "8",
+    36: "9" 
 }
 word = input()
 character = list(word)
@@ -40,15 +51,18 @@ def converter(word):
             if letter == value:
                 print("key: %s , value: %s" % (key, value))
                 final_string.append(key)
-                if (cont == 4):
-                    print("La traducción está limitada a 5 caracteres")
+                if cont == 3:
+                    print("La traducción está limitada a 4 caracteres")
                     cont = 0
                     for x in final_string:
                         print(x)
                     return final_string
                     exit()
                 else:
-                    cont = cont + 1
+                    cont += 1
+                    if key > 26:
+                        cont += 1
+                    
     cont = 0
     for x in final_string:
         print(x)
