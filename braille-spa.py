@@ -26,7 +26,7 @@ spanish_dict = {
     24: "w",
     24: "x",
     25: "y",
-    26: "z"
+    26: "z",
     27: "0",
     28: "1",
     29: "2",
@@ -36,7 +36,7 @@ spanish_dict = {
     33: "6",
     34: "7",
     35: "8",
-    36: "9" 
+    36: "9",
 }
 word = input()
 character = list(word)
@@ -64,7 +64,7 @@ def converter(word):
                     cont += 1
                     if key > 26:
                         cont += 1
-                    
+
     cont = 0
     for x in final_string:
         print(x)
