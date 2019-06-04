@@ -1,3 +1,5 @@
+import glob, os
+
 spanish_dict = {
     0: " ",
     1: "a",
@@ -38,17 +40,35 @@ spanish_dict = {
     35: "8",
     36: "9",
 }
+
+#Variables
 word = input()
-character = list(word)
 final_string = []
 cont = 0
 
+# usb path
+usbPath = ""
+ourFile = ""
 
+
+#Words converter
 def converter(word):
     global cont
-    for letter in character:
+    for char in word:
+        if (char == "á"):
+            char = "a"
+        elif (char == "é"):
+            char = "e"
+        elif (char == "í"):
+            char = "i"
+        elif (char == "ó"):
+            char = "o"
+        elif (char == "ú"):
+            char = "u"
+        elif (char == "ñ"):
+            char = "n"
         for key, value in spanish_dict.items():
-            if letter == value:
+            if char == value:
                 print("key: %s , value: %s" % (key, value))
                 if key > 26:
                     final_string.append("#")
@@ -70,4 +90,26 @@ def converter(word):
         print(x)
 
 
-converter(word)
+print(final_string)
+
+os.chdir(usbPath)
+for document in glob.glob("*.txt"):
+    if document:
+        ourFile = document
+        print(ourFile)
+        break
+    else:
+        print("No hay archivos válidos")
+
+readfile = open(ourFile, "r")
+contents = readfile.read()
+print(contents)
+
+wordList = contents.split()
+for word in wordList:
+    for char in word:
+        if (char == ","):
+            word = word.replace(",", "")
+        elif (char == "."):
+            word = word.replace(".", "")
+    converter(word + " ")
