@@ -1,4 +1,13 @@
-import glob, os
+# coding=utf-8
+import re
+import subprocess
+import os
+import glob
+#Variables
+final_string = []
+cont = 0
+
+ourFile = ""
 
 spanish_dict = {
     0: " ",
@@ -41,32 +50,21 @@ spanish_dict = {
     36: "9",
 }
 
-#Variables
-word = input()
-final_string = []
-cont = 0
-
-# usb path
-usbPath = ""
-ourFile = ""
-
 
 #Words converter
 def converter(word):
     global cont
     for char in word:
         if (char == "á"):
-            char = "a"
+            char = char.replace("á", "a")
         elif (char == "é"):
-            char = "e"
+            char = char.replace("é", "e")
         elif (char == "í"):
-            char = "i"
+            char = char.replace("í", "i")
         elif (char == "ó"):
-            char = "o"
+            char = char.replace("ó", "o")
         elif (char == "ú"):
-            char = "u"
-        elif (char == "ñ"):
-            char = "n"
+            char = char.replace("ú", "u")
         for key, value in spanish_dict.items():
             if char == value:
                 print("key: %s , value: %s" % (key, value))
@@ -90,10 +88,45 @@ def converter(word):
         print(x)
 
 
-print(final_string)
+import re
+import subprocess
+import os
+from glob import glob
+from subprocess import check_output, CalledProcessError
+
+
+def getPath():
+    global usbNewDir
+    usbNewDir = ""
+
+    def get_usb_devices():
+        sdb_devices = map(os.path.realpath, glob('/sys/block/sd*'))
+        usb_devices = (dev for dev in sdb_devices
+                       if 'usb' in dev.split('/')[5])
+        return dict((os.path.basename(dev), dev) for dev in usb_devices)
+
+    def get_mount_points(devices=None):
+        devices = devices or get_usb_devices(
+        )  # if devices are None: get_usb_devices
+        output = check_output(['mount']).splitlines()
+        is_usb = lambda path: any(dev in path for dev in devices)
+        usb_info = (line for line in output if is_usb(line.split()[0]))
+        return [(info.split()[0], info.split()[2]) for info in usb_info]
+
+    if __name__ == '__main__':
+        usb_dir = get_mount_points()
+        print('Directorio de USB (si la hay):')
+        print(
+            usb_dir[0][1])  #Prints always 1st detected usb drive and its path.
+        usbNewDir = usb_dir[0][1]
+        #print(usbNewDir)
+    return (usbNewDir)
+
+
+usbPath = getPath()
 
 os.chdir(usbPath)
-for document in glob.glob("*.txt"):
+for document in glob("*.txt"):
     if document:
         ourFile = document
         print(ourFile)
@@ -113,3 +146,4 @@ for word in wordList:
         elif (char == "."):
             word = word.replace(".", "")
     converter(word + " ")
+print(final_string)
