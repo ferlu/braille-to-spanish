@@ -71,35 +71,36 @@ import os
 from glob import glob
 from subprocess import check_output, CalledProcessError
 
-# def getPath():
-#     global usbNewDir
-#     usbNewDir = ""
 
-#     def get_usb_devices():
-#         sdb_devices = map(os.path.realpath, glob('/sys/block/sd*'))
-#         usb_devices = (dev for dev in sdb_devices
-#                        if 'usb' in dev.split('/')[5])
-#         return dict((os.path.basename(dev), dev) for dev in usb_devices)
+def getPath():
+    global usbNewDir
+    usbNewDir = ""
 
-#     def get_mount_points(devices=None):
-#         devices = devices or get_usb_devices(
-#         )  # if devices are None: get_usb_devices
-#         output = check_output(['mount']).splitlines()
-#         is_usb = lambda path: any(dev in path for dev in devices)
-#         usb_info = (line for line in output if is_usb(line.split()[0]))
-#         return [(info.split()[0], info.split()[2]) for info in usb_info]
+    def get_usb_devices():
+        sdb_devices = map(os.path.realpath, glob('/sys/block/sd*'))
+        usb_devices = (dev for dev in sdb_devices
+                       if 'usb' in dev.split('/')[5])
+        return dict((os.path.basename(dev), dev) for dev in usb_devices)
 
-#     if __name__ == '__main__':
-#         usb_dir = get_mount_points()
-#         print('Directorio de USB (si la hay):')
-#         print(
-#             usb_dir[0][1])  #Prints always 1st detected usb drive and its path.
-#         usbNewDir = usb_dir[0][1]
-#         #print(usbNewDir)
-#     return (usbNewDir)
+    def get_mount_points(devices=None):
+        devices = devices or get_usb_devices(
+        )  # if devices are None: get_usb_devices
+        output = check_output(['mount']).splitlines()
+        is_usb = lambda path: any(dev in path for dev in devices)
+        usb_info = (line for line in output if is_usb(line.split()[0]))
+        return [(info.split()[0], info.split()[2]) for info in usb_info]
 
-# usbPath = getPath()
-usbPath = "/Users/ferlu/Documents/CETI/ing/8/proyecto/braille-to-spanish/"
+    if __name__ == '__main__':
+        usb_dir = get_mount_points()
+        print('Directorio de USB (si la hay):')
+        print(
+            usb_dir[0][1])  #Prints always 1st detected usb drive and its path.
+        usbNewDir = usb_dir[0][1]
+        #print(usbNewDir)
+    return (usbNewDir)
+
+
+usbPath = getPath()
 
 os.chdir(usbPath)
 for document in glob("*.txt"):
