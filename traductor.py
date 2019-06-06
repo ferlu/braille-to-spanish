@@ -123,15 +123,6 @@ n = 5
 for word in wordList:
     for char in word:
         print(char)
-        #        char_uni=unicode(char,'utf-8')
-        #valores uni letra son: 225-233-237-243-250
-        #        print([ord(x) for x in u'á'])
-        #        print([ord(x) for x in u'é'])
-        #        print([ord(x) for x in u'í'])
-        #        print([ord(x) for x in u'ó'])
-        #        print([ord(x) for x in u'ú'])
-        #        print([ord(x) for x in char])
-        #        print(unichr(243))
         #Replacing special characters
         if (char == ","):
             word = word.replace(",", "")
