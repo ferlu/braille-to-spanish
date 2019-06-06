@@ -1,8 +1,12 @@
-# coding=utf-8
+# -*- coding: utf-8 -*-
+#from __future__ import unicode_literals
 import re
 import subprocess
 import os
 import glob
+from glob import glob
+from subprocess import check_output, CalledProcessError
+import unicodedata
 
 #Variables
 final_string = []
@@ -65,13 +69,6 @@ def converter(word):
                 break
 
 
-import re
-import subprocess
-import os
-from glob import glob
-from subprocess import check_output, CalledProcessError
-
-
 def getPath():
     global usbNewDir
     usbNewDir = ""
@@ -101,7 +98,7 @@ def getPath():
 
 
 usbPath = getPath()
-
+print(usbPath)
 os.chdir(usbPath)
 for document in glob("*.txt"):
     if document:
@@ -114,29 +111,32 @@ for document in glob("*.txt"):
 #reading .txt file from our specified path
 readfile = open(ourFile, "r")
 contents = readfile.read()
-print(contents)
+#converting to unicode to avoid special characters such as áéíóú
+contents = unicode(contents, 'utf-8')
+filterContents = unicodedata.normalize('NFKD',
+                                       contents).encode('ascii', 'ignore')
+print(filterContents)
 #splitting words using space as a separator
-wordList = contents.split()
+wordList = filterContents.split()
 n = 5
 
 for word in wordList:
     for char in word:
+        print(char)
+        #        char_uni=unicode(char,'utf-8')
+        #valores uni letra son: 225-233-237-243-250
+        #        print([ord(x) for x in u'á'])
+        #        print([ord(x) for x in u'é'])
+        #        print([ord(x) for x in u'í'])
+        #        print([ord(x) for x in u'ó'])
+        #        print([ord(x) for x in u'ú'])
+        #        print([ord(x) for x in char])
+        #        print(unichr(243))
         #Replacing special characters
         if (char == ","):
             word = word.replace(",", "")
         elif (char == "."):
             word = word.replace(".", "")
-        elif (char == "á"):
-            word = word.replace("á", "a")
-        elif (char == "é"):
-            word = word.replace("é", "e")
-        elif (char == "í"):
-            word = word.replace("í", "i")
-        elif (char == "ó"):
-            word = word.replace("ó", "o")
-        elif (char == "ú"):
-            word = word.replace("ú", "u")
-
     #Splitting our word every 5 characters
     # "holitas" will turn into a list ["holit","as"]
     splitWord = [word[i:i + n] for i in range(0, len(word), n)]
