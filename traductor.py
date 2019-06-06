@@ -158,5 +158,28 @@ for combinations in splitFinal:
     if combinations[0] == 0:
         del combinations[0]
         break
-
 print(splitFinal)
+print(
+    "El documento ha sido procesado y los códigos de los motores han sido generados"
+)
+buttons = 1
+btn_adelante = True
+btn_atras = False
+count = 0
+final_length = len(splitFinal)
+while (buttons):
+    if (btn_adelante == True and btn_atras == True):
+        btn_adelante = False
+        btn_atras = False
+    elif (btn_adelante == False and btn_atras == False):
+        print("Presiona un botón")
+    elif (btn_adelante == True and count >= 0 and count < final_length):
+        print(splitFinal[count])
+        count += 1
+    elif (btn_adelante == True and count == final_length):
+        print("Llegaste al final del documento")
+    elif (btn_atras == True and count > 0 and count <= final_length):
+        print(splitFinal[count - 1])
+        count -= 1
+    elif (btn_atras == True and count == 0):
+        print("Llegaste al inicio del documento")
