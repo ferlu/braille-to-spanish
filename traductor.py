@@ -1,8 +1,12 @@
-# coding=utf-8
+# -*- coding: utf-8 -*-
+#from __future__ import unicode_literals
 import re
 import subprocess
 import os
 import glob
+from glob import glob
+from subprocess import check_output, CalledProcessError
+import unicodedata
 
 #Variables
 final_string = []
@@ -65,12 +69,6 @@ def converter(word):
                 break
 
 
-import re
-import subprocess
-import os
-from glob import glob
-from subprocess import check_output, CalledProcessError
-
 # def getPath():
 #     global usbNewDir
 #     usbNewDir = ""
@@ -99,8 +97,8 @@ from subprocess import check_output, CalledProcessError
 #     return (usbNewDir)
 
 # usbPath = getPath()
-usbPath = "/Users/ferlu/Documents/CETI/ing/8/proyecto/braille-to-spanish/"
-
+usbPath = "/Users/ferlu/Documents/CETI/ing/8/proyecto"
+print(usbPath)
 os.chdir(usbPath)
 for document in glob("*.txt"):
     if document:
@@ -113,29 +111,25 @@ for document in glob("*.txt"):
 #reading .txt file from our specified path
 readfile = open(ourFile, "r")
 contents = readfile.read()
-print(contents)
+
+#converting to unicode to avoid special characters such as áéíóú
+# contents = unicode(contents, 'utf-8')
+# filterContents = unicodedata.normalize('NFKD',
+#                                        contents).encode('ascii', 'ignore')
+# print(filterContents)
+
 #splitting words using space as a separator
 wordList = contents.split()
 n = 5
 
 for word in wordList:
     for char in word:
+        print(char)
         #Replacing special characters
         if (char == ","):
             word = word.replace(",", "")
         elif (char == "."):
             word = word.replace(".", "")
-        elif (char == "á"):
-            word = word.replace("á", "a")
-        elif (char == "é"):
-            word = word.replace("é", "e")
-        elif (char == "í"):
-            word = word.replace("í", "i")
-        elif (char == "ó"):
-            word = word.replace("ó", "o")
-        elif (char == "ú"):
-            word = word.replace("ú", "u")
-
     #Splitting our word every 5 characters
     # "holitas" will turn into a list ["holit","as"]
     splitWord = [word[i:i + n] for i in range(0, len(word), n)]
@@ -151,3 +145,41 @@ for word in wordList:
     else:
         converter(word + " ")
 print(final_string)
+
+#Se divide la lista de 5 en 5, creando asì varias sublistas con el còdigo a pasar a los motores.
+#Ejemplo: [8, 16, 12, 9, 21, 1, 20, 0, 4, 5, 0, 13, 1, 19, 0]
+#Se transforma en  [[8, 16, 12, 9, 21], [1, 20, 0, 4, 5], [0, 13, 1, 19, 0]]
+splitFinal = [final_string[i:i + n] for i in range(0, len(final_string), n)]
+for combinations in splitFinal:
+    #Si el primer numero de una sub-lista es 0, significa que hay un espacio.
+    #No tiene caso poner un espacio como inicio de una palabra, asì que se elimina ese còdigo.
+    #Por eso al fina el còdigo de [[8, 16, 12, 9, 21], [1, 20, 0, 4, 5], [0, 13, 1, 19, 0]]
+    # Queda como  [[8, 16, 12, 9, 21], [1, 20, 0, 4, 5], [13, 1, 19, 0]]
+    if combinations[0] == 0:
+        del combinations[0]
+        break
+print(splitFinal)
+print(
+    "El documento ha sido procesado y los códigos de los motores han sido generados"
+)
+buttons = 1
+btn_adelante = True
+btn_atras = False
+count = 0
+final_length = len(splitFinal)
+while (buttons):
+    if (btn_adelante == True and btn_atras == True):
+        btn_adelante = False
+        btn_atras = False
+    elif (btn_adelante == False and btn_atras == False):
+        print("Presiona un botón")
+    elif (btn_adelante == True and count >= 0 and count < final_length):
+        print(splitFinal[count])
+        count += 1
+    elif (btn_adelante == True and count == final_length):
+        print("Llegaste al final del documento")
+    elif (btn_atras == True and count > 0 and count <= final_length):
+        print(splitFinal[count - 1])
+        count -= 1
+    elif (btn_atras == True and count == 0):
+        print("Llegaste al inicio del documento")
