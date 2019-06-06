@@ -69,35 +69,36 @@ def converter(word):
                 break
 
 
-# def getPath():
-#     global usbNewDir
-#     usbNewDir = ""
+def getPath():
+    global usbNewDir
+    usbNewDir = ""
 
-#     def get_usb_devices():
-#         sdb_devices = map(os.path.realpath, glob('/sys/block/sd*'))
-#         usb_devices = (dev for dev in sdb_devices
-#                        if 'usb' in dev.split('/')[5])
-#         return dict((os.path.basename(dev), dev) for dev in usb_devices)
+    def get_usb_devices():
+        sdb_devices = map(os.path.realpath, glob('/sys/block/sd*'))
+        usb_devices = (dev for dev in sdb_devices
+                       if 'usb' in dev.split('/')[5])
+        return dict((os.path.basename(dev), dev) for dev in usb_devices)
 
-#     def get_mount_points(devices=None):
-#         devices = devices or get_usb_devices(
-#         )  # if devices are None: get_usb_devices
-#         output = check_output(['mount']).splitlines()
-#         is_usb = lambda path: any(dev in path for dev in devices)
-#         usb_info = (line for line in output if is_usb(line.split()[0]))
-#         return [(info.split()[0], info.split()[2]) for info in usb_info]
+    def get_mount_points(devices=None):
+        devices = devices or get_usb_devices(
+        )  # if devices are None: get_usb_devices
+        output = check_output(['mount']).splitlines()
+        is_usb = lambda path: any(dev in path for dev in devices)
+        usb_info = (line for line in output if is_usb(line.split()[0]))
+        return [(info.split()[0], info.split()[2]) for info in usb_info]
 
-#     if __name__ == '__main__':
-#         usb_dir = get_mount_points()
-#         print('Directorio de USB (si la hay):')
-#         print(
-#             usb_dir[0][1])  #Prints always 1st detected usb drive and its path.
-#         usbNewDir = usb_dir[0][1]
-#         #print(usbNewDir)
-#     return (usbNewDir)
+    if __name__ == '__main__':
+        usb_dir = get_mount_points()
+        print('Directorio de USB (si la hay):')
+        print(
+            usb_dir[0][1])  #Prints always 1st detected usb drive and its path.
+        usbNewDir = usb_dir[0][1]
+        #print(usbNewDir)
+    return (usbNewDir)
 
-# usbPath = getPath()
-usbPath = "/Users/ferlu/Documents/CETI/ing/8/proyecto"
+
+usbPath = getPath()
+
 print(usbPath)
 os.chdir(usbPath)
 for document in glob("*.txt"):
@@ -112,14 +113,14 @@ for document in glob("*.txt"):
 readfile = open(ourFile, "r")
 contents = readfile.read()
 
-#converting to unicode to avoid special characters such as áéíóú
-# contents = unicode(contents, 'utf-8')
-# filterContents = unicodedata.normalize('NFKD',
-#                                        contents).encode('ascii', 'ignore')
-# print(filterContents)
+# converting to unicode to avoid special characters such as áéíóú
+contents = unicode(contents, 'utf-8')
+filterContents = unicodedata.normalize('NFKD',
+                                       contents).encode('ascii', 'ignore')
+print(filterContents)
 
 #splitting words using space as a separator
-wordList = contents.split()
+wordList = filterContents.split()
 n = 5
 
 for word in wordList:
