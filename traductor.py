@@ -163,12 +163,13 @@ print(splitFinal)
 print(
     "El documento ha sido procesado y los códigos de los motores han sido generados"
 )
-buttons = 1
+buttons = 0
 btn_adelante = True
 btn_atras = False
 count = 0
 final_length = len(splitFinal)
-while (buttons):
+# Se supone que debe ser while buttons, pero genera un ciclo infinito en la rasp porque no existen los botones aun,
+while (buttons < 15):
     if (btn_adelante == True and btn_atras == True):
         btn_adelante = False
         btn_atras = False
@@ -184,3 +185,4 @@ while (buttons):
         count -= 1
     elif (btn_atras == True and count == 0):
         print("Llegaste al inicio del documento")
+    buttons += 1
