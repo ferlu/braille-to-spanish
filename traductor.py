@@ -4,14 +4,21 @@ import re
 import subprocess
 import os
 import glob
+import globales
+import serial
+import time
+import unicodedata
 from glob import glob
 from subprocess import check_output, CalledProcessError
-import unicodedata
+from gpiozero import Button
 
 #Variables
 final_string = []
 cont = 0
 ourFile = ""
+btn_adelante = Button(20, False)
+btn_atras = Button(21, False)
+port = '/dev/ttyUSB1' #puerto para conectar con arduino
 
 spanish_dict = {
     0: " ",
@@ -98,8 +105,6 @@ def getPath():
 
 
 usbPath = getPath()
-# usbPath = getPath()
-#usbPath = "/Users/ferlu/Documents/CETI/ing/8/proyecto"
 
 print(usbPath)
 os.chdir(usbPath)
@@ -114,6 +119,8 @@ for document in glob("*.txt"):
 #reading .txt file from our specified path
 readfile = open(ourFile, "r")
 contents = readfile.read()
+
+# converting to unicode to avoid special characters such as áéíóú
 contents = unicode(contents, 'utf-8')
 filterContents = unicodedata.normalize('NFKD',
                                        contents).encode('ascii', 'ignore')
@@ -160,29 +167,38 @@ for combinations in splitFinal:
         del combinations[0]
         break
 print(splitFinal)
-print(
-    "El documento ha sido procesado y los códigos de los motores han sido generados"
-)
-buttons = 0
-btn_adelante = True
-btn_atras = False
-count = 0
+print("El documento ha sido procesado y los códigos de los motores han sido generados")
 final_length = len(splitFinal)
-# Se supone que debe ser while buttons, pero genera un ciclo infinito en la rasp porque no existen los botones aun,
-while (buttons < 15):
-    if (btn_adelante == True and btn_atras == True):
-        btn_adelante = False
-        btn_atras = False
-    elif (btn_adelante == False and btn_atras == False):
-        print("Presiona un botón")
-    elif (btn_adelante == True and count >= 0 and count < final_length):
-        print(splitFinal[count])
-        count += 1
-    elif (btn_adelante == True and count == final_length):
+ard = serial.Serial(port,9600,timeout=5)
+
+def adelante ():
+    if globales.count >= 0 and globales.count < final_length:
+        print(splitFinal[globales.count])
+        ard.flush()
+        ard.write(splitFinal[globales.count])
+        msg = ard.read(ard.inWaiting()) # read all characters in buffer
+        print ("Message from arduino: ")
+        print (msg)
+        globales.count += 1
+    elif globales.count == final_length:
         print("Llegaste al final del documento")
-    elif (btn_atras == True and count > 0 and count <= final_length):
-        print(splitFinal[count - 1])
-        count -= 1
-    elif (btn_atras == True and count == 0):
+    globales.button+=1   
+def atras ():
+    if globales.count > 0 and globales.count <= final_length:
+        print(splitFinal[globales.count - 1])
+        ard.flush()
+        ard.write(splitFinal[globales.count-1])
+        time.sleep(1)
+        msg = ard.read(ard.inWaiting()) # read all characters in buffer
+        print ("Message from arduino: ")
+        print (msg)
+        globales.count -= 1
+    elif globales.count == 0:
         print("Llegaste al inicio del documento")
-    buttons += 1
+    globales.button+=1
+
+# Se supone que debe ser while buttons, pero genera un ciclo infinito en la rasp porque no existen los botones aun,
+while globales.button < 15 and globales.count<=final_length:
+    btn_adelante.when_pressed = adelante
+    btn_atras.when_pressed = atras
+

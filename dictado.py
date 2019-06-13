@@ -10,7 +10,7 @@ test = open('text.docx', 'w')
 f = open('text.txt', 'w')
 
 print('Bienvenido al conversor de voz a texto para Python.')
-#model_path = get_model_path()
+model_path = get_model_path()
 #print(model_path)
 print('Cargando . . .')
 speech = LiveSpeech(verbose=False,
